@@ -7,10 +7,10 @@
  */
 
 $search = array(
-    'plugin-name',  'plugin_name',  'Plugin_Name',  'Plugin Name',  'WordPress Plugin Boilerplate',
+    'plugin-name',  'plugin_name',  'Plugin_Name',  '=== Plugin Name ===',  'WordPress Plugin Boilerplate',
 );
 $replace = array(
-    'bikes-base',     'bikes_base',     'Bikes_Base',     'Bikes Base',     'Bikes Base',
+    'my-plugin',  'my_plugin',  'My_Plugin',  '=== My Plugin ===',  'My Plugin',
 );
 
 function scanpudindir($path, $search, $replace) {
