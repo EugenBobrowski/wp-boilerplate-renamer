@@ -27,26 +27,49 @@ class Renamer {
 
     }
 
+    /**
+     * Generate replacement array.
+     */
     public function generate_replace_array() {
+        $this->search = strtolower($this->search);
+        $this->replace = strtolower($this->replace);
         $replace_array = array(
+            //    'twenty fifteen' => 'twenty something',
             $this->search => $this->replace,
         );
-        $search_exploded = explode(' ', $this->search);
-        $replace_exploded = explode(' ', $this->replace);
+        $search_exploded_lc = explode(' ', $this->search);
+        $replace_exploded_lc = explode(' ', $this->replace);
 
+        $search_exploded_ucfirst = explode(' ', ucwords($this->search));
+        $replace_exploded_ucfirst = explode(' ', ucwords($this->replace));
+
+
+
+        //    'Twenty Fifteen' => 'Twenty Something',
+        $replace_array[implode(' ', $search_exploded_ucfirst)] = implode(' ', $replace_exploded_ucfirst);
+        //    'TwentyFifteen' => 'TwentySomething',
+        $replace_array[implode('_', $search_exploded_ucfirst)] = implode('_', $replace_exploded_ucfirst);
+        //    'Twenty_Fifteen' => 'Twenty_Something',
+        $replace_array[implode('_', $search_exploded_ucfirst)] = implode('_', $replace_exploded_ucfirst);
         //    'twentyfifteen' => 'twentysomething',
-        $replace_array[strtolower(implode('',$search_exploded))] = strtolower(implode('',$replace_exploded));
+        $replace_array[implode('',$search_exploded_lc)] = implode('',$replace_exploded_lc);
         //    'twenty-fifteen' => 'twenty-something',
-        $replace_array[strtolower(implode('-',$search_exploded))] = strtolower(implode('-',$replace_exploded));
+        $replace_array[implode('-',$search_exploded_lc)] = implode('-',$replace_exploded_lc);
         //    'twenty_fifteen' => 'twenty_something',
-        $replace_array[strtolower(implode('_',$search_exploded))] = strtolower(implode('_',$replace_exploded));
+        $replace_array[implode('_',$search_exploded_lc)] = implode('_',$replace_exploded_lc);
         //    'TWENTY_FIFTEEN' => 'TWENTY_SOMETHING',
-        $replace_array[strtoupper(implode('_',$search_exploded))] = strtoupper(implode('_',$replace_exploded));
+        $replace_array[strtoupper(implode('_',$search_exploded_lc))] = strtoupper(implode('_',$replace_exploded_lc));
 
-        $this->replace_array = $replace_array;
+        $this->add_replacement($replace_array);
 
     }
 
+    /**
+     * @param $replace_array
+     */
+    public function add_replacement($replace_array) {
+        $this->replace_array = array_merge($this->replace_array, $replace_array);
+    }
     /**
      * @param $content string
      * @return string
@@ -129,6 +152,11 @@ $renameObject->replace_array = array(
 $renameObject->search = 'Twenty Fifteen';
 $renameObject->replace = 'Twenty Something';
 $renameObject->generate_replace_array();
+
+$renameObject->add_replacement(array(
+    'WordPress Plugin Boilerplate' => 'Events Manager',
+    'Events Manager:' => 'Plugin Name:',
+));
 
 /**
  * Run the renaming process
