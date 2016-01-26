@@ -17,7 +17,10 @@ class Renamer {
      * @var string
      */
     public $replace;
-
+    /**
+     * @var array. Which files or dirs must be ignored by Renamer. Add the relative path with path which you insert in scanTheDir() method. Ex. ./ + / + .git = .//.git
+     */
+    public $ignore = array();
     /**
      * @var array. Keys are searched. Values are replaced.
      */
@@ -27,49 +30,31 @@ class Renamer {
 
     }
 
-    /**
-     * Generate replacement array.
-     */
+    public function addIgnore($file)
+    {
+        $this->ignore[] = $file;
+    }
+
     public function generate_replace_array() {
-        $this->search = strtolower($this->search);
-        $this->replace = strtolower($this->replace);
         $replace_array = array(
-            //    'twenty fifteen' => 'twenty something',
             $this->search => $this->replace,
         );
-        $search_exploded_lc = explode(' ', $this->search);
-        $replace_exploded_lc = explode(' ', $this->replace);
+        $search_exploded = explode(' ', $this->search);
+        $replace_exploded = explode(' ', $this->replace);
 
-        $search_exploded_ucfirst = explode(' ', ucwords($this->search));
-        $replace_exploded_ucfirst = explode(' ', ucwords($this->replace));
-
-
-
-        //    'Twenty Fifteen' => 'Twenty Something',
-        $replace_array[implode(' ', $search_exploded_ucfirst)] = implode(' ', $replace_exploded_ucfirst);
-        //    'TwentyFifteen' => 'TwentySomething',
-        $replace_array[implode('_', $search_exploded_ucfirst)] = implode('_', $replace_exploded_ucfirst);
-        //    'Twenty_Fifteen' => 'Twenty_Something',
-        $replace_array[implode('_', $search_exploded_ucfirst)] = implode('_', $replace_exploded_ucfirst);
         //    'twentyfifteen' => 'twentysomething',
-        $replace_array[implode('',$search_exploded_lc)] = implode('',$replace_exploded_lc);
+        $replace_array[strtolower(implode('',$search_exploded))] = strtolower(implode('',$replace_exploded));
         //    'twenty-fifteen' => 'twenty-something',
-        $replace_array[implode('-',$search_exploded_lc)] = implode('-',$replace_exploded_lc);
+        $replace_array[strtolower(implode('-',$search_exploded))] = strtolower(implode('-',$replace_exploded));
         //    'twenty_fifteen' => 'twenty_something',
-        $replace_array[implode('_',$search_exploded_lc)] = implode('_',$replace_exploded_lc);
+        $replace_array[strtolower(implode('_',$search_exploded))] = strtolower(implode('_',$replace_exploded));
         //    'TWENTY_FIFTEEN' => 'TWENTY_SOMETHING',
-        $replace_array[strtoupper(implode('_',$search_exploded_lc))] = strtoupper(implode('_',$replace_exploded_lc));
+        $replace_array[strtoupper(implode('_',$search_exploded))] = strtoupper(implode('_',$replace_exploded));
 
-        $this->add_replacement($replace_array);
+        $this->replace_array = $replace_array;
 
     }
 
-    /**
-     * @param $replace_array
-     */
-    public function add_replacement($replace_array) {
-        $this->replace_array = array_merge($this->replace_array, $replace_array);
-    }
     /**
      * @param $content string
      * @return string
@@ -96,6 +81,11 @@ class Renamer {
             } elseif (realpath($path_item) == __FILE__ ) {
                 echo '<li>';
                 echo '<em>THIS FILE '.__FILE__.'</em>';
+                echo '</li>';
+            }  elseif (in_array($path_item, $this->ignore)) {
+                echo '<li>';
+                echo '<em>' . $item . '</em>';
+                echo ' [IGNORED] ';
                 echo '</li>';
             } elseif (is_dir($path_item)) {
                 echo '<li>';
@@ -135,15 +125,47 @@ class Renamer {
 
 }
 
-$renameObject = new Renamer();
 
-$renameObject->replace_array = array(
-    'Twenty Fifteen' => 'Twenty Something',
-    'twentyfifteen' => 'twentysomething',
-    'twenty-fifteen' => 'twenty-something',
-    'twenty_fifteen' => 'twenty_something',
-    'TWENTY_FIFTEEN' => 'TWENTY_SOMETHING',
-);
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Boilerplate Renamer</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<h1>Boilerplate Renamer</h1>
+
+<?php
+
+$renameObject = new Renamer();
+//
+//$renameObject->replace_array = array(
+//    'Twenty Fifteen' => 'Twenty Something',
+//    'twentyfifteen' => 'twentysomething',
+//    'twenty-fifteen' => 'twenty-something',
+//    'twenty_fifteen' => 'twenty_something',
+//    'TWENTY_FIFTEEN' => 'TWENTY_SOMETHING',
+//);
 
 /**
  * You can generate this with next three lines. Or add another search-replace items to array to the beginning or to the end, but after generation of replace array.
@@ -152,14 +174,23 @@ $renameObject->replace_array = array(
 $renameObject->search = 'Twenty Fifteen';
 $renameObject->replace = 'Twenty Something';
 $renameObject->generate_replace_array();
-
-$renameObject->add_replacement(array(
-    'WordPress Plugin Boilerplate' => 'Events Manager',
-    'Events Manager:' => 'Plugin Name:',
-));
+$renameObject->addIgnore('.//.git');
 
 /**
  * Run the renaming process
  */
 
 $renameObject->scanTheDir('./');
+
+
+?>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+</body>
+</html>
