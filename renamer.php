@@ -71,12 +71,12 @@ class Renamer
 //            echo $item;
             } elseif (realpath($path_item) == __FILE__) {
                 echo '<li>';
-                echo '<em>THIS FILE ' . __FILE__ . '</em>';
+                echo '<em>' . __FILE__ . '</em> <span class="label label-primary">This file</span>';
                 echo '</li>';
             } elseif (in_array($path_item, $this->ignore)) {
                 echo '<li>';
                 echo '<em>' . $item . '</em>';
-                echo ' [IGNORED] ';
+                echo ' <span class="label label-default">Ignored</span> ';
                 echo '</li>';
             } elseif (is_dir($path_item)) {
                 echo '<li>';
