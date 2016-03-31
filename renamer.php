@@ -175,7 +175,7 @@ class Renamer
     $renameObject->replace = 'Twenty Something';
     $renameObject->generate_replace_array();
     $renameObject->replace_array = array_merge($renameObject->replace_array, array(
-        $renameObject->search . ':' => 'Plugin Name:', //Fix plugin description replacement
+        $renameObject->replace . ':' => 'Plugin Name:', //Fix plugin description replacement
         'Your Name or Your Company' => 'Your Name or Your Company',
         'http://example.com/' => 'http://example.com/',
         'WordPress Plugin Boilerplate' => 'WordPress Plugin Boilerplate'
