@@ -45,12 +45,21 @@ class Renamer
         $search_exploded = explode(' ', $this->search);
         $replace_exploded = explode(' ', $this->replace);
 
+        //    'Twenty Fifteen' => 'Twenty Something',
+        $replace_array[ucfirst(implode(' ', $search_exploded))] = ucfirst(implode(' ', $replace_exploded));
+
+        //    'Twenty_Fifteen' => 'Twenty_Something',
+        $replace_array[ucfirst(implode('_', $search_exploded))] = ucfirst(implode('_', $replace_exploded));
+
         //    'twentyfifteen' => 'twentysomething',
         $replace_array[strtolower(implode('', $search_exploded))] = strtolower(implode('', $replace_exploded));
+
         //    'twenty-fifteen' => 'twenty-something',
         $replace_array[strtolower(implode('-', $search_exploded))] = strtolower(implode('-', $replace_exploded));
+
         //    'twenty_fifteen' => 'twenty_something',
         $replace_array[strtolower(implode('_', $search_exploded))] = strtolower(implode('_', $replace_exploded));
+
         //    'TWENTY_FIFTEEN' => 'TWENTY_SOMETHING',
         $replace_array[strtoupper(implode('_', $search_exploded))] = strtoupper(implode('_', $replace_exploded));
 
